@@ -1,0 +1,56 @@
+#!/usr/bin/expect -f
+
+set archiveid "foobar"
+set dbuser "root"
+set dbpass "password"
+set dbrootuser "root"
+set dbrootpass "password"
+
+log_user 1
+# exp_internal 1
+spawn bin/epadmin "create" "zero"
+
+#-- Archive ID --#
+expect "Archive ID"
+send "$archiveid\n"
+
+#-- Vital Settings --#
+expect "Configure vital settings"
+send "no\n"
+
+#-- Database --#
+expect "Configure database"
+send "yes\n"
+expect "Database Name"
+send "\n"
+expect "MySQL Host"
+send "\n"
+expect "MySQL Port"
+send "\n"
+expect "MySQL Socket"
+send "\n"
+expect "Database User"
+send "$dbuser\n"
+expect "Database Password"
+send "$dbpass\n"
+expect "Database Engine"
+send "\n"
+expect "Write these database settings"
+send "\n"
+expect "Create database"
+send "\n"
+expect "Database Superuser Username"
+send "$dbrootuser\n"
+expect "Database Superuser Password"
+send "$dbrootpass\n"
+
+#-- Iniitial user --#
+expect "Create an initial user"
+send "yes\n"
+expect {
+    -re {^([^\r]*)\r\n} {
+        # puts "The line is '$expect_out(1,string)'."
+        exp_continue
+    }
+}
+# interact

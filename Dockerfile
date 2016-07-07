@@ -21,7 +21,7 @@
 # # or to create a publications repository
 # bin/epadmin create publication
 FROM ubuntu:16.04
-WORKDIR /opt/eprints
+WORKDIR /opt/eprints3
 
 # ENV EPRINTS_TARBALL_URL="http://files.eprints.org/1101/1/eprints-3.4-preview-1.tgz"
 ENV EPRINTS_TARBALL="eprints-3.4-preview-1.tgz"
@@ -72,14 +72,14 @@ RUN apt-get update -y && apt-get install -y \
 # Dependencies taken from the Debian source package control file:
 RUN apt-get update -y && apt-get install -y sudo
 
-# wtf must input to epadmin be read from terminal??
-ENV COLUMNS 0
-ENV LINES 0
+RUN apt-get install -y expect
+
+ADD install.expect install.expect
 
 RUN useradd eprints && \
     chown -R eprints:eprints /opt/eprints3 && \
     cd /opt/eprints3 && \
-    sudo -u eprints sh -c "COLUMNS=80 ROWS=25 echo 'test-repo'| bin/epadmin create zero"
+    sudo -u eprints expect install.expect
 
 CMD service apache2 start
 
