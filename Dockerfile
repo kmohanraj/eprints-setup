@@ -26,13 +26,16 @@ WORKDIR /opt/eprints3
 # ENV EPRINTS_TARBALL_URL="http://files.eprints.org/1101/1/eprints-3.4-preview-1.tgz"
 ENV EPRINTS_TARBALL="eprints-3.4-preview-1.tgz"
 ENV EPRINTS_TARBALL_PUBL="eprints_publication_flavour-3.4-preview-1.tgz"
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
+ENV MYSQL_PASSWORD="root"
 
 ADD eprints-3.4-preview-1.tgz /opt
 ADD eprints_publication_flavour-3.4-preview-1.tgz /opt/eprints3
 
 # Dependencies taken from the Debian source package control file:
-RUN apt-get update -y && apt-get install -y \
+RUN echo "mysql-server mysql-server/root_password password $MYSQL_PASSWORD" | debconf-set-selections \
+    && echo "mysql-server mysql-server/root_password_again password $MYSQL_PASSWORD" | debconf-set-selections \ 
+    && apt-get update -y && apt-get install -y \
     perl \
     libncurses5 \
     libselinux1 \
@@ -70,16 +73,17 @@ RUN apt-get update -y && apt-get install -y \
     libsearch-xapian-perl
 
 # Dependencies taken from the Debian source package control file:
-RUN apt-get update -y && apt-get install -y sudo
-
-RUN apt-get install -y expect
+RUN apt-get update -y && apt-get install -y sudo expect
 
 ADD install.expect install.expect
 
-RUN useradd eprints && \
+RUN service mysql start && \
+    useradd eprints && \
     chown -R eprints:eprints /opt/eprints3 && \
     cd /opt/eprints3 && \
-    sudo -u eprints expect install.expect
+    sudo -u eprints expect install.expect && \
+    echo 'Include /opt/eprints3/cfg/apache.conf' \
+        >> /etc/apache2/sites-enabled/000-default.conf && \
+    service apache2 start
 
-CMD service apache2 start
-
+EXPOSE 80

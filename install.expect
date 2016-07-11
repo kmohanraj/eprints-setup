@@ -2,9 +2,12 @@
 
 set archiveid "foobar"
 set dbuser "root"
-set dbpass "password"
+set dbpass "root"
 set dbrootuser "root"
-set dbrootpass "password"
+set dbrootpass "root"
+set epadminuser "admin"
+set epadminpass "admin"
+set epadminemail "foo@bar.com"
 
 log_user 1
 # exp_internal 1
@@ -16,7 +19,23 @@ send "$archiveid\n"
 
 #-- Vital Settings --#
 expect "Configure vital settings"
-send "no\n"
+send "yes\n"
+expect "Hostname?"
+send "eprints-3.4.local\n"
+expect "Webserver Port"
+send "80\n"
+expect "Alias "
+send "\n"
+expect "Path "
+send "\n"
+expect "HTTPS Hostname"
+send "\n"
+expect "Administrator Email"
+send "$epadminemail\n"
+expect "Archive Name"
+send "\n"
+expect "Write these core settings"
+send "\n"
 
 #-- Database --#
 expect "Configure database"
@@ -37,19 +56,32 @@ expect "Database Engine"
 send "\n"
 expect "Write these database settings"
 send "\n"
-expect "Create database"
+expect "Create database \"$archiveid\" "
 send "\n"
 expect "Database Superuser Username"
 send "$dbrootuser\n"
 expect "Database Superuser Password"
 send "$dbrootpass\n"
-
+expect "Create database tables"
+send "yes\n"
 #-- Iniitial user --#
 expect "Create an initial user"
 send "yes\n"
+expect "Enter a username"
+send "$epadminuser\n"
+expect "Select a user type"
+send "\n"
+expect "Enter Password?"
+send "$epadminpass\n"
+expect "Email?"
+send "$epadminemail\n"
+expect "Do you want to build the static web pages?"
+send "\n"
+expect "Do you want to update the apache config files?"
+send "\n"
 expect {
     -re {^([^\r]*)\r\n} {
-        # puts "The line is '$expect_out(1,string)'."
+        puts "> '$expect_out(1,string)'."
         exp_continue
     }
 }
