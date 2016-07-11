@@ -1,3 +1,10 @@
+# Run as
+#     docker run kbai/eprints -p 4444:4444
+# Set up host:
+#     echo '127.0.0.1 eprints-3.4.local eprints-3.4' >> /etc/hosts
+# Open in browser:
+#     http://eprints-3.4.local:4444
+#
 # http://files.eprints.org/1101/1/eprints-3.4-preview-1.tgz
 # EPrints 3.4 has the same prerequisites as 3.3.
 # We advise installing eprints into /opt, and running apache as the eprints user
@@ -82,8 +89,19 @@ RUN service mysql start && \
     chown -R eprints:eprints /opt/eprints3 && \
     cd /opt/eprints3 && \
     sudo -u eprints expect install.expect && \
-    echo 'Include /opt/eprints3/cfg/apache.conf' \
-        >> /etc/apache2/sites-enabled/000-default.conf && \
+    chmod -R g+w . && \
+    chgrp -R www-data . && \
+     sudo -u eprints ./bin/import_subjects foobar
+
+RUN echo 'Include /opt/eprints3/cfg/apache.conf' > /etc/apache2/sites-enabled/000-default.conf && \
+    echo 'ErrorLog ${APACHE_LOG_DIR}/error.log' >> /etc/apache2/sites-enabled/000-default.conf && \
+    echo 'CustomLog ${APACHE_LOG_DIR}/access.log combined' >> /etc/apache2/sites-enabled/000-default.conf && \
+    echo 'Listen 4444' >> /etc/apache2/ports.conf && \
+    a2dismod mpm_event && \
+    a2enmod mpm_prefork && \
     service apache2 start
 
 EXPOSE 80
+
+ADD docker-cmd.sh .
+CMD bash ./docker-cmd.sh
