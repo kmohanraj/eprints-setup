@@ -1,15 +1,15 @@
 #!/usr/bin/expect -f
 
-set archiveid "foobar"
+set archiveid "eprints"
 set dbuser "root"
 set dbpass "root"
 set dbrootuser "root"
 set dbrootpass "root"
 set epadminuser "admin"
 set epadminpass "admin"
-set epadminemail "foo@bar.com"
-set ephost "eprints-3.4.local"
-set epport "4444"
+set epadminemail "admin@gmail.com"
+set ephost "eprints.id"
+set epport "80"
 # set eptype "zero"
 set eptype "publication"
 

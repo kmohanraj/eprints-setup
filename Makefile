@@ -1,2 +1,2 @@
 docker:
-	docker build -t kbai/eprints .
+	docker build -t eprints-dev .
