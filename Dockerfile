@@ -1,8 +1,6 @@
 FROM ubuntu:16.04
-
 WORKDIR /opt/eprints3
 
-# ENV EPRINTS_TARBALL_URL="http://files.eprints.org/1101/1/eprints-3.4-preview-1.tgz"
 ENV EPRINTS_TARBALL="eprints-3.4-preview-1.tgz"
 ENV EPRINTS_TARBALL_PUBL="eprints_publication_flavour-3.4-preview-1.tgz"
 ENV DEBIAN_FRONTEND=noninteractive
