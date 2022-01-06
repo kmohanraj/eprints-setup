@@ -1,4 +1,6 @@
-##### EPrints docker Setup
+#### EPrints docker Setup
+
+##### Prerequisites
 
 STEP 1: RUN Makefile
 

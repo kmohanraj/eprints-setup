@@ -1,2 +1,2 @@
 docker:
-	docker build -t eprints-dev .
+	docker build -t eprints_dev .

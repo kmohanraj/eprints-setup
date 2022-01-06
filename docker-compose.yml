@@ -1,0 +1,34 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    hostname: eprints.id
+    ports:
+      - "80:80"
+    # links:
+    #   - db
+    container_name: app
+    volumes:
+      - eprints:/opt/eprints3
+    # entrypoint: ./docker-cmd.sh
+
+
+
+#   db:
+#     image: mysql:5.7
+#     platform: linux/amd64
+#     container_name: Eprintsdb
+#     restart: unless-stopped
+#     volumes:
+#       - db_data:/var/lib/mysql
+#     ports:
+#       - "3306:3306"
+#     environment:
+#       MYSQL_ROOT_HOST: localhost
+#       MYSQL_ROOT_PASSWORD: root
+#       MYSQL_DATABASE: eprints
+#       MYSQL_PASSWORD: root
+
+volumes:
+  eprints:
+

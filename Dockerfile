@@ -1,13 +1,12 @@
 FROM ubuntu:16.04
 WORKDIR /opt/eprints3
 
-ENV EPRINTS_TARBALL="eprints-3.4-preview-1.tgz"
-ENV EPRINTS_TARBALL_PUBL="eprints_publication_flavour-3.4-preview-1.tgz"
 ENV DEBIAN_FRONTEND=noninteractive
 ENV MYSQL_PASSWORD="root"
 
 ADD eprints-3.4-preview-1.tgz /opt
 ADD eprints_publication_flavour-3.4-preview-1.tgz /opt/eprints3
+# ADD eprints3 eprints3
 
 # Dependencies taken from the Debian source package control file:
 RUN echo "mysql-server mysql-server/root_password password $MYSQL_PASSWORD" | debconf-set-selections \
@@ -57,7 +56,9 @@ ADD install.expect install.expect
 
 RUN service mysql start && \
     useradd eprints && \
-    chown -R eprints:eprints /opt/eprints3 && \
+    sudo groupadd docker && \
+    sudo usermod -aG docker eprints && \
+    chown -R eprints:www-data /opt/eprints3 && \
     cd /opt/eprints3 && \
     sudo -u eprints expect install.expect && \
     chmod -R g+w . && \
@@ -73,6 +74,5 @@ RUN echo 'Include /opt/eprints3/cfg/apache.conf' > /etc/apache2/sites-enabled/00
     service apache2 start
 
 EXPOSE 80
+CMD cat /etc/hosts && sudo echo "127.0.0.1    eprints.id" >> /etc/hosts && cat /etc/hosts && service mysql start && service apache2 start && tail -f /var/log/apache2/*.log
 
-ADD docker-cmd.sh .
-CMD bash ./docker-cmd.sh
